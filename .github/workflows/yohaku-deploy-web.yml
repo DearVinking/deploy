@@ -48,7 +48,7 @@ jobs:
           SERVICE: ${{ inputs.service }}
           DEPLOY_ENV: ${{ inputs.deploy_env }}
         run: |
-          [ "$SOURCE_REPO" = "DearVinking/Shiroi" ] || { echo "Unexpected source_repo: $SOURCE_REPO"; exit 1; }
+          [ "$SOURCE_REPO" = "DearVinking/Yohaku" ] || { echo "Unexpected source_repo: $SOURCE_REPO"; exit 1; }
           [ "$SOURCE_REF" = "refs/heads/main" ] || { echo "Unexpected source_ref: $SOURCE_REF"; exit 1; }
           [ "$SERVICE" = "web" ] || { echo "Unexpected service: $SERVICE"; exit 1; }
           [ -n "$SOURCE_SHA" ] || { echo "source_sha is required"; exit 1; }
