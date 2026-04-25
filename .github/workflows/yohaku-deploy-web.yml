@@ -72,6 +72,7 @@ jobs:
           fetch-depth: 1
           lfs: true
           path: source
+          submodules: recursive   # ← 拉取 design-oss/design-system submodule
 
       - name: Verify checked out revision
         shell: bash
@@ -82,6 +83,32 @@ jobs:
           [ "$ACTUAL_SHA" = "${{ inputs.source_sha }}" ] || { echo "Checked out unexpected SHA"; exit 1; }
 
       - run: cd source && git lfs checkout
+
+      # 确保 packages/design-system symlink 正确指向已初始化的 submodule
+      - name: Fix design-system symlink
+        shell: bash
+        run: |
+          cd source
+          TARGET="$(pwd)/design-oss/design-system"
+          LINK="packages/design-system"
+
+          if [ ! -d "$TARGET" ]; then
+            echo "ERROR: design-oss/design-system submodule not found at $TARGET"
+            echo "Submodule status:"
+            git submodule status
+            exit 1
+          fi
+
+          # 如果 symlink 损坏或不存在，重建它
+          if [ ! -d "$LINK" ]; then
+            echo "Symlink $LINK missing or broken, recreating..."
+            mkdir -p packages
+            rm -f "$LINK"
+            ln -sf "$TARGET" "$LINK"
+          fi
+
+          echo "design-system resolved to: $(readlink -f $LINK)"
+          ls "$LINK/package.json" && echo "package.json found ✓"
 
       - name: 设置 pnpm
         uses: pnpm/action-setup@v3
