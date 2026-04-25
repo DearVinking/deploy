@@ -132,6 +132,29 @@ jobs:
             nextjs-${{ runner.os }}-${{ hashFiles('source/pnpm-lock.yaml') }}-
             nextjs-${{ runner.os }}-
 
+      - name: Debug workspace
+        working-directory: source
+        run: |
+          echo "=== pnpm-workspace.yaml ==="
+          cat pnpm-workspace.yaml
+      
+          echo "=== packages/ 目录结构 ==="
+          ls -la packages/ || echo "packages/ 不存在"
+      
+          echo "=== design-system 目录 ==="
+          ls -la packages/design-system || echo "packages/design-system 不存在"
+          readlink packages/design-system || echo "不是 symlink"
+      
+          echo "=== design-system 内容 ==="
+          ls packages/design-system/ || echo "目录为空或不可访问"
+          cat packages/design-system/package.json || echo "没有 package.json"
+      
+          echo "=== design-oss/ 目录 ==="
+          ls -la design-oss/ || echo "design-oss/ 不存在"
+      
+          echo "=== git submodule status ==="
+          git submodule status
+    
       - name: 安装依赖
         working-directory: source
         run: pnpm install --no-frozen-lockfile
